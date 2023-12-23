@@ -7,11 +7,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.istef.triviaquiz.data.QuestionPool;
 import com.istef.triviaquiz.model.Question;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private TextView txtQuestion;
@@ -43,7 +45,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
         new QuestionPool().getQuestions(questionList -> {
-            this.questionList = questionList;
+            this.questionList = questionList.stream()
+                    .sorted((a, b) -> (int) (Math.random()*100) - 50)
+                    .collect(Collectors.toList());
             updateQuestionAndCounter(0);
         });
     }
@@ -58,8 +62,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 updateQuestionAndCounter(1);
                 break;
             case R.id.buttonTrue:
+                checkAnswer(true);
                 break;
             case R.id.buttonFalse:
+                checkAnswer(false);
                 break;
         }
     }
@@ -74,5 +80,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         txtQuestion.setText(questionList.get(currentQuestionIndex).getText());
         String counterText = currentQuestionIndex + 1 + "/" + questionList.size();
         txtCounter.setText(counterText);
+    }
+
+    private void checkAnswer(boolean answer) {
+        int messageId = answer == questionList.get(currentQuestionIndex).isCorrect()
+                ? R.string.message_correct : R.string.message_wrong;
+        Toast.makeText(this, messageId, Toast.LENGTH_SHORT).show();
     }
 }
