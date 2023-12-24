@@ -1,19 +1,25 @@
 package com.istef.triviaquiz;
 
+import androidx.annotation.ColorInt;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.istef.triviaquiz.data.QuestionPool;
 import com.istef.triviaquiz.model.Question;
 
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private TextView txtQuestion;
@@ -22,6 +28,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button btnFalse;
     private ImageButton btnPrev;
     private ImageButton btnNext;
+    private CardView cardView;
     private int currentQuestionIndex = 0;
     private List<Question> questionList;
 
@@ -37,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnFalse = findViewById(R.id.buttonFalse);
         txtQuestion = findViewById(R.id.txtQuestion);
         txtCounter = findViewById(R.id.txtCounter);
+        cardView = findViewById(R.id.cardView);
 
         btnPrev.setOnClickListener(this);
         btnNext.setOnClickListener(this);
@@ -45,9 +53,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
         new QuestionPool().getQuestions(questionList -> {
-            this.questionList = questionList.stream()
-                    .sorted((a, b) -> (int) (Math.random()*100) - 50)
-                    .collect(Collectors.toList());
+            this.questionList = questionList;
             updateQuestionAndCounter(0);
         });
     }
@@ -83,8 +89,76 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void checkAnswer(boolean answer) {
-        int messageId = answer == questionList.get(currentQuestionIndex).isCorrect()
-                ? R.string.message_correct : R.string.message_wrong;
-        Toast.makeText(this, messageId, Toast.LENGTH_SHORT).show();
+        @ColorInt int color = answer == questionList.get(currentQuestionIndex).isCorrect()
+                ? Color.GREEN : Color.RED;
+        if (answer == questionList.get(currentQuestionIndex).isCorrect()) {
+            fadeAnimation(cardView, Color.GREEN);
+        } else {
+            shakeColorAnimation(cardView, Color.RED);
+        }
+
+    }
+
+    private void shakeColorAnimation(View view, @ColorInt int color) {
+        Animation shakeAnimation = AnimationUtils.loadAnimation(this, R.anim.shake_animation);
+
+        view.setAnimation(shakeAnimation);
+
+        shakeAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                view.setBackgroundColor(color);
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                view.setBackgroundColor(viewInitBackColor());
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+
+            private @ColorInt int viewInitBackColor() {
+                return view instanceof CardView
+                        ? ((CardView) view).getCardBackgroundColor().getDefaultColor()
+                        : ((ColorDrawable) view.getBackground()).getColor();
+            }
+        });
+
+        view.requestLayout();
+    }
+
+    private void fadeAnimation(View view, @ColorInt int color) {
+        AlphaAnimation alphaAnimation = new AlphaAnimation(1.0f, 0.0f);
+        alphaAnimation.setDuration(300);
+        alphaAnimation.setRepeatCount(1);
+        alphaAnimation.setRepeatMode(Animation.REVERSE);
+
+        view.setAnimation(alphaAnimation);
+
+        alphaAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                view.setBackgroundColor(color);
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                view.setBackgroundColor(viewInitBackColor());
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+
+            private @ColorInt int viewInitBackColor() {
+                return view instanceof CardView
+                        ? ((CardView) view).getCardBackgroundColor().getDefaultColor()
+                        : ((ColorDrawable) view.getBackground()).getColor();
+            }
+        });
+
+        view.requestLayout();
     }
 }

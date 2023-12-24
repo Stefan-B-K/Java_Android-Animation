@@ -11,6 +11,7 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class QuestionPool {
@@ -34,6 +35,9 @@ public class QuestionPool {
                             throw new RuntimeException(e);
                         }
                     }
+                    questions = questions.stream()
+                            .sorted((a, b) -> (int) (Math.random() * 100) - 50)
+                            .collect(Collectors.toList());
                     if (callback != null) callback.processFinished(questions);
                 },
                 error -> Log.e("JSON error: ", error.getMessage() )
