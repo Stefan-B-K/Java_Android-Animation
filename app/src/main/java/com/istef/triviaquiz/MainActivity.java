@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     public void run() {
                         fadeOutAnimation(view, viewInitBackColor(), callback);
                     }
-                }, 300);
+                }, 100);
             }
 
             @Override
