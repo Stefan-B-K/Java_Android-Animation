@@ -4,12 +4,17 @@ import androidx.annotation.ColorInt;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
+import android.animation.Animator;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
@@ -20,8 +25,6 @@ import com.istef.triviaquiz.model.Question;
 import com.istef.triviaquiz.model.Score;
 
 import java.util.List;
-import java.util.function.Function;
-
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -81,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         txtQuestion.setText(questionList.get(currentQuestionIndex).getText());
         String counterText = currentQuestionIndex + 1 + "/" + questionList.size();
         txtCounter.setText(counterText);
+        fadeInAnimation(cardView);
     }
 
     private void checkAnswer(boolean answer) {
@@ -98,10 +102,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+
     private void shakeColorAnimation(View view, @ColorInt int color, NextQuestion callback) {
         Animation shakeAnimation = AnimationUtils.loadAnimation(this, R.anim.shake_animation);
-
-        view.setAnimation(shakeAnimation);
 
         shakeAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override
@@ -111,8 +114,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                view.setBackgroundColor(viewInitBackColor());
-                callback.next();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        fadeOutAnimation(view, viewInitBackColor(), callback);
+                    }
+                }, 300);
             }
 
             @Override
@@ -126,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
-        view.requestLayout();
+        view.startAnimation(shakeAnimation);
     }
 
     private void fadeAnimation(View view, @ColorInt int color, NextQuestion callback) {
@@ -134,8 +141,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         alphaAnimation.setDuration(300);
         alphaAnimation.setRepeatCount(1);
         alphaAnimation.setRepeatMode(Animation.REVERSE);
-
-        view.setAnimation(alphaAnimation);
 
         alphaAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override
@@ -145,8 +150,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                view.setBackgroundColor(viewInitBackColor());
-                callback.next();
+                fadeOutAnimation(view, viewInitBackColor(), callback);
             }
 
             @Override
@@ -160,6 +164,37 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
-        view.requestLayout();
+        view.startAnimation(alphaAnimation);
+    }
+
+    private void fadeOutAnimation(View view, @ColorInt int initBackColor, NextQuestion callback) {
+        AlphaAnimation alphaAnimation = new AlphaAnimation(1.0f, 0.0f);
+        alphaAnimation.setDuration(300);
+        alphaAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                view.setBackgroundColor(initBackColor);
+                callback.next();
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+
+        view.startAnimation(alphaAnimation);
+    }
+
+    private void fadeInAnimation(View view) {
+        AlphaAnimation alphaAnimation = new AlphaAnimation(0.0f, 1.0f);
+        alphaAnimation.setDuration(300);
+
+        view.startAnimation(alphaAnimation);
     }
 }
