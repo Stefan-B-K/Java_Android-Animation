@@ -12,14 +12,16 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.istef.triviaquiz.data.QuestionPool;
+import com.istef.triviaquiz.model.NextQuestion;
 import com.istef.triviaquiz.model.Question;
 import com.istef.triviaquiz.model.Score;
 
 import java.util.List;
+import java.util.function.Function;
+
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -29,8 +31,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView txtHighestScore;
     private Button btnTrue;
     private Button btnFalse;
-    private ImageButton btnPrev;
-    private ImageButton btnNext;
     private CardView cardView;
     private int currentQuestionIndex = 0;
     private List<Question> questionList;
@@ -44,8 +44,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         score = new Score(this, 100);
 
-        btnPrev = findViewById(R.id.buttonPrev);
-        btnNext = findViewById(R.id.buttonNext);
         btnTrue = findViewById(R.id.buttonTrue);
         btnFalse = findViewById(R.id.buttonFalse);
         txtQuestion = findViewById(R.id.txtQuestion);
@@ -57,27 +55,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         txtScore.setText("0");
         txtHighestScore.setText(String.valueOf(Score.getHighestScore()));
 
-        btnPrev.setOnClickListener(this);
-        btnNext.setOnClickListener(this);
         btnTrue.setOnClickListener(this);
         btnFalse.setOnClickListener(this);
 
 
         new QuestionPool().getQuestions(questionList -> {
             this.questionList = questionList;
-            updateQuestionAndCounter(0);
+            nextQuestion();
         });
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.buttonPrev:
-                updateQuestionAndCounter(-1);
-                break;
-            case R.id.buttonNext:
-                updateQuestionAndCounter(1);
-                break;
             case R.id.buttonTrue:
                 checkAnswer(true);
                 break;
@@ -86,13 +76,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void updateQuestionAndCounter(int relativeIndex) {
-        if (relativeIndex == -1 && currentQuestionIndex > 0) {
-            currentQuestionIndex--;
-        }
-        if (relativeIndex == 1) {
-            currentQuestionIndex = ++currentQuestionIndex % questionList.size();
-        }
+    private void nextQuestion() {
+        currentQuestionIndex = ++currentQuestionIndex % questionList.size();
         txtQuestion.setText(questionList.get(currentQuestionIndex).getText());
         String counterText = currentQuestionIndex + 1 + "/" + questionList.size();
         txtCounter.setText(counterText);
@@ -107,13 +92,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         @ColorInt int color = correctAnswer ? Color.GREEN : Color.RED;
         if (answer == questionList.get(currentQuestionIndex).isCorrect()) {
-            fadeAnimation(cardView, Color.GREEN);
+            fadeAnimation(cardView, Color.GREEN, this::nextQuestion);
         } else {
-            shakeColorAnimation(cardView, Color.RED);
+            shakeColorAnimation(cardView, Color.RED, this::nextQuestion);
         }
     }
 
-    private void shakeColorAnimation(View view, @ColorInt int color) {
+    private void shakeColorAnimation(View view, @ColorInt int color, NextQuestion callback) {
         Animation shakeAnimation = AnimationUtils.loadAnimation(this, R.anim.shake_animation);
 
         view.setAnimation(shakeAnimation);
@@ -127,6 +112,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onAnimationEnd(Animation animation) {
                 view.setBackgroundColor(viewInitBackColor());
+                callback.next();
             }
 
             @Override
@@ -143,7 +129,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         view.requestLayout();
     }
 
-    private void fadeAnimation(View view, @ColorInt int color) {
+    private void fadeAnimation(View view, @ColorInt int color, NextQuestion callback) {
         AlphaAnimation alphaAnimation = new AlphaAnimation(1.0f, 0.0f);
         alphaAnimation.setDuration(300);
         alphaAnimation.setRepeatCount(1);
@@ -160,6 +146,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onAnimationEnd(Animation animation) {
                 view.setBackgroundColor(viewInitBackColor());
+                callback.next();
             }
 
             @Override

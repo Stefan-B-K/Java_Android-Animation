@@ -3,9 +3,6 @@
     <string name="trivia_quiz">Trivia Quiz</string>
     <string name="button_false">False</string>
     <string name="button_true">True</string>
-    <string name="descr_prev">Previous Question</string>
-    <string name="message_correct">Yes! That\'s right!</string>
-    <string name="message_wrong">No, incorrect!</string>
     <string name="score">Score:</string>
     <string name="highest_Score">Highest:</string>
 </resources>

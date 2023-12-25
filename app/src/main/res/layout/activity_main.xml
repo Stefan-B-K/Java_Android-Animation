@@ -68,19 +68,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/cardView">
 
-            <ImageButton
-                android:id="@+id/buttonPrev"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginBottom="10dp"
-                android:layout_weight="1"
-                android:backgroundTint="@color/material_dynamic_primary30"
-                android:contentDescription="@string/descr_prev"
-                android:src="@android:drawable/ic_media_previous" />
-
             <Button
                 android:id="@+id/buttonTrue"
                 android:layout_width="wrap_content"
@@ -106,17 +93,6 @@
                 android:text="@string/button_false"
                 android:textSize="20sp" />
 
-            <ImageButton
-                android:id="@+id/buttonNext"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginBottom="10dp"
-                android:layout_weight="1"
-                android:backgroundTint="@color/material_dynamic_primary30"
-                android:src="@android:drawable/ic_media_next" />
         </LinearLayout>
 
         <TextView
