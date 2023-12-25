@@ -13,10 +13,8 @@
         android:layout_height="335dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.5">
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/txtTitle"
@@ -37,7 +35,7 @@
             android:layout_width="351dp"
             android:layout_height="190dp"
             android:layout_marginStart="10dp"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="36dp"
             android:layout_marginEnd="10dp"
             app:cardBackgroundColor="@color/cardBackground"
             app:cardElevation="6dp"
@@ -125,11 +123,55 @@
             android:id="@+id/txtCounter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="6dp"
             android:textColor="@color/material_dynamic_primary80"
             android:textSize="16sp"
             app:layout_constraintBottom_toTopOf="@+id/cardView"
             app:layout_constraintEnd_toEndOf="@+id/cardView" />
+
+        <TextView
+            android:id="@+id/lblScore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="6dp"
+            android:text="@string/score"
+            android:textColor="@android:color/holo_orange_light"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toTopOf="@+id/cardView"
+            app:layout_constraintStart_toStartOf="@+id/cardView" />
+
+        <TextView
+            android:id="@+id/txtScore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:layout_marginBottom="6dp"
+            android:textColor="@android:color/holo_orange_light"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/cardView"
+            app:layout_constraintStart_toEndOf="@+id/lblScore" />
+
+        <TextView
+            android:id="@+id/lblHighestScore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="140dp"
+            android:text="@string/highest_Score"
+            android:textColor="@android:color/holo_green_light"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="@+id/lblScore"
+            app:layout_constraintStart_toStartOf="@+id/lblScore" />
+
+        <TextView
+            android:id="@+id/txtHighestScore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:textColor="@android:color/holo_green_light"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/lblHighestScore"
+            app:layout_constraintStart_toEndOf="@+id/lblHighestScore" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

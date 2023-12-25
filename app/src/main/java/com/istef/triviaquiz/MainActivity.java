@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.istef.triviaquiz.data.QuestionPool;
 import com.istef.triviaquiz.model.Question;
+import com.istef.triviaquiz.model.Score;
 
 import java.util.List;
 
@@ -24,6 +25,8 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private TextView txtQuestion;
     private TextView txtCounter;
+    private TextView txtScore;
+    private TextView txtHighestScore;
     private Button btnTrue;
     private Button btnFalse;
     private ImageButton btnPrev;
@@ -31,12 +34,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private CardView cardView;
     private int currentQuestionIndex = 0;
     private List<Question> questionList;
+    private Score score;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        score = new Score(this, 100);
 
         btnPrev = findViewById(R.id.buttonPrev);
         btnNext = findViewById(R.id.buttonNext);
@@ -45,6 +51,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         txtQuestion = findViewById(R.id.txtQuestion);
         txtCounter = findViewById(R.id.txtCounter);
         cardView = findViewById(R.id.cardView);
+        txtScore = findViewById(R.id.txtScore);
+        txtHighestScore = findViewById(R.id.txtHighestScore);
+
+        txtScore.setText("0");
+        txtHighestScore.setText(String.valueOf(Score.getHighestScore()));
 
         btnPrev.setOnClickListener(this);
         btnNext.setOnClickListener(this);
@@ -88,14 +99,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void checkAnswer(boolean answer) {
-        @ColorInt int color = answer == questionList.get(currentQuestionIndex).isCorrect()
-                ? Color.GREEN : Color.RED;
+        boolean correctAnswer = answer == questionList.get(currentQuestionIndex).isCorrect();
+
+        score.setCurrentScore(correctAnswer);
+        txtScore.setText(String.valueOf(score.getCurrentScore()));
+        txtHighestScore.setText(String.valueOf(Score.getHighestScore()));
+
+        @ColorInt int color = correctAnswer ? Color.GREEN : Color.RED;
         if (answer == questionList.get(currentQuestionIndex).isCorrect()) {
             fadeAnimation(cardView, Color.GREEN);
         } else {
             shakeColorAnimation(cardView, Color.RED);
         }
-
     }
 
     private void shakeColorAnimation(View view, @ColorInt int color) {

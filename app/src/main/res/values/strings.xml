@@ -6,4 +6,6 @@
     <string name="descr_prev">Previous Question</string>
     <string name="message_correct">Yes! That\'s right!</string>
     <string name="message_wrong">No, incorrect!</string>
+    <string name="score">Score:</string>
+    <string name="highest_Score">Highest:</string>
 </resources>
